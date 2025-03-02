@@ -1,4 +1,5 @@
 # Setup / Testing
+https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf
 ## picamera2
 <!-- https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf -->
 ### Testing
@@ -8,6 +9,7 @@ rpicam-hello
 ### Updating
 ```shell
 sudo apt install -y python3-picamera2 --no-install-recommends # install with no GUI dependencies
+# remove --no-install-recommends for GUI
 ```
 ### Testing python
 ```python
@@ -28,4 +30,10 @@ If the test script is only working outside the venv, start a new terminal and ru
 python3 -m venv --system-site-packages env
 source env/bin/activate
 python main.py
+```
+
+# open-cv
+```bash
+sudo apt install -y python3-opencv
+sudo apt install -y opencv-data
 ```
