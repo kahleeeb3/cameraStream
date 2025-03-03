@@ -6,9 +6,9 @@ from picamera2 import Picamera2 # type: ignore
 import cv2
 
 # video parameters
-resX = 640
-resY = 360
-fps = 15
+resX = 1920
+resY = 1080
+# fps = 30
 imgQuality = 50
 queue_size = 50
 
@@ -26,14 +26,18 @@ def capture_frames():
         np_array = picam2.capture_array()
         rgb_array = cv2.cvtColor(np_array, cv2.COLOR_BGR2RGB)
         _, jpeg = cv2.imencode('.jpg', rgb_array, [int(cv2.IMWRITE_JPEG_QUALITY), imgQuality])
-        frame_queue.put(jpeg.tobytes()) # if queue full, stop writing
+        try:
+            frame_queue.put_nowait(jpeg.tobytes())  # Avoid blocking if queue is full
+        except queue.Full:
+            print("frame dropped")
+            pass  # Drop the frame instead of blocking
 
 def generate_video():
     while True:
         frame_data = frame_queue.get() # get frame data, if queue empty stop
         yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n\r\n')
-        sleep(1/fps) # set frame rate by pausing
+        # sleep(1/fps) # set frame rate by pausing
 
 # thread to capture frames
 capture_thread = threading.Thread(target=capture_frames)
